@@ -1,0 +1,12 @@
+dfhead <- read.table("household_power_consumption.txt",header=FALSE, sep=";",nrows=1,stringsAsFactors = FALSE)
+df <- read.table("household_power_consumption.txt",header=FALSE, sep=";",skip= grep("1/2/2007",readLines("household_power_consumption.txt")),nrows=2878)
+colnames(df) <- unlist(dfhead)
+df2 <- df
+df2$Date <- as.Date(strptime(df2[,1],"%d/%m/%Y"))
+df2$datetime <- as.POSIXct(paste(df2$Date, df2$Time), format="%Y-%m-%d %H:%M:%S")
+with(df2,plot(datetime,Sub_metering_1, type="l",xlab="",ylab="Energy sub metering"))
+with(df2,points(datetime,Sub_metering_2, type="l",col="red"))
+with(df2,points(datetime,Sub_metering_3, type="l",col="blue"))
+legend("topright",col=c("black","red","blue"),lty=1,cex=0.5,legend=c("Sub_metering_1","Sub_metering_2","Sub_metering_3"))
+dev.copy(png,"plot3.png")
+dev.off()

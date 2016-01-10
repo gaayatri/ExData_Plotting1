@@ -1,0 +1,18 @@
+dfhead <- read.table("household_power_consumption.txt",header=FALSE, sep=";",nrows=1,stringsAsFactors = FALSE)
+df <- read.table("household_power_consumption.txt",header=FALSE, sep=";",skip= grep("1/2/2007",readLines("household_power_consumption.txt")),nrows=2878)
+colnames(df) <- unlist(dfhead)
+df2 <- df
+df2$Date <- as.Date(strptime(df2[,1],"%d/%m/%Y"))
+df2$datetime <- as.POSIXct(paste(df2$Date, df2$Time), format="%Y-%m-%d %H:%M:%S")
+par(mfrow=c(2,2),mar=c(4,4,4,1),cex.lab=0.75,cex.axis=1)
+with(df2,{
+  plot(datetime,Global_active_power,type = "l",xlab="",ylab="Global Active Power(kilowatts)",cex.lab=0.75,cex.axis=1)
+  plot(datetime,Voltage,type = "l",xlab="datetime",ylab="Voltage")
+  plot(datetime,Sub_metering_1, type="l",xlab="",ylab="Energy sub metering")
+  points(datetime,Sub_metering_2, type="l",col="red")
+  points(datetime,Sub_metering_3, type="l",col="blue")
+  legend("topright",col=c("black","red","blue"),lty=1,cex=0.5,legend=c("Sub_metering_1","Sub_metering_2","Sub_metering_3"))
+  plot(datetime,Global_reactive_power,type = "l",xlab="datetime",ylab="Global_reactive_power")
+})
+dev.copy(png,"plot4.png")
+dev.off()
